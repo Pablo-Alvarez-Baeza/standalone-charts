@@ -53,4 +53,30 @@ titanic_1 |>
     legend.position = "none"
   )
   
+
+
   
+
+
+Tdate = c("2020-04-20", "2020-04-22","2020-05-16","2020-05-29", "2020-06-20", "2020-07-02", "2020-07-18", "2020-07-19", "2020-07-22", "2020-09-14", "2020-10-10", "2020-10-15", "2020-11-22", "2020-12-22", "2020-12-24", "2020-12-25")
+Tevents = data.frame(station1=c(1,0,0,1,1,1,1,0,0,0,1,1,0,1,0,1),station2=c(1,0,1,1,0,1,1,0,1,1,1,1,0,1,1,1), station3=c(0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0) )
+Zevents<-zoo(Tevents,as.Date(Tdate))
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+Tevents$dat <- as.Date(Tdate)
+
+
+data <- Tevents %>% pivot_longer(cols = contains('station'), names_to = 'station')
+
+ggplot(data) + geom_point(aes(x = dat, y = 2))+
+  geom_vline(aes(xintercept  = dat), data = filter(data,value == 1)) +
+  coord_cartesian(ylim = c(0,1))+
+  facet_wrap(~station, ncol = 1, strip.position = 'left') +
+  theme(axis.title.y       = element_blank(),
+        axis.text.y        = element_blank(),
+        axis.ticks.y       = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank())
