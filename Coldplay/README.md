@@ -1,1 +1,1 @@
-![](Coldplay/Coldplay_figma.png)
+![](Coldplay_figma.png)
