@@ -80,7 +80,7 @@ plot1 <- coldplay |>
        subtitle = "Musical positiveness conveyed by a track") +
   theme_minimal() +
   theme(
-    plot.margin = margin(rep(5, 4)),
+    plot.margin = margin(5,5,0,5),
     plot.background = element_rect(fill = "black", color = "black"),
     panel.background = element_rect(fill = "black", color = "black"),
     panel.grid = element_blank(),
@@ -146,7 +146,7 @@ plot2 <- coldplay |>
        subtitle = "Perceptual measure of intensity and activity") +
   theme_minimal() +
   theme(
-    plot.margin = margin(rep(5, 4)),
+    plot.margin = margin(5,5,0,5),
     plot.background = element_rect(fill = "black", color = "black"),
     panel.background = element_rect(fill = "black", color = "black"),
     panel.grid = element_blank(),
@@ -206,7 +206,7 @@ plot3 <- coldplay |>
        subtitle = "Suitability of a track for dancing") +
   theme_minimal() +
   theme(
-    plot.margin = margin(rep(5, 4)),
+    plot.margin = margin(5,5,0,5),
     plot.background = element_rect(fill = "black", color = "black"),
     panel.background = element_rect(fill = "black", color = "black"),
     panel.grid = element_blank(),
@@ -229,20 +229,53 @@ plot3 <- coldplay |>
 patchwork <- plot1 | plot2 | plot3 
   
 patchwork + plot_annotation(title = 'COLDPLAY',
-                            caption = "Each metric is measured from 0 to 1. Median values for each studio album shown\nVisualization by Pablo Alvarez | Data from Spotify",
-                  theme = theme(plot.title = element_text(size = 60,
+                  theme = theme(plot.title = element_text(size = 80,
                                                           color = "white",
                                                           family = "Coldplay",
                                                           hjust = .5,
-                                                          margin = margin(b = 10)),
-                                plot.caption = element_text(size = 7.5,
-                                                            color = "white",
-                                                            family = "Lato",
-                                                            hjust = .5,
-                                                            lineheight = 1,
-                                                            margin = margin(t = -5)),
+                                                          margin = margin(b = 20)),
+                                plot.margin = margin(5, 5, 0, 5),
                   plot.background = element_rect(fill = "black", color = "black"),
                   panel.background = element_rect(fill = "black", color = "black"))) 
 
 
 ggsave("coldplay.png",  width = 1080, height = 608, units= "px", dpi = 320)
+
+
+
+# Ternary plot ------------------------------------------------------------
+library(ggtern)
+
+coldplay |> 
+slice_max(danceability, n = 1) |> 
+  select(track_name)
+
+coldplay_ternary <- coldplay |> 
+  mutate(group = factor(case_when(valence == max(valence) ~ 1,
+                                  energy == max(energy) ~ 1,
+                                  danceability == max(danceability) ~ 1,
+                                  TRUE ~ 2))) 
+
+coldplay_ternary |> 
+  ggplot(aes(x = valence, y = energy, z = danceability, color = group, alpha = group, fill = "yellow")) +
+  coord_tern() +
+  geom_point(data = filter(coldplay_ternary, group == 2), size = 1, show.legend = FALSE) +
+  geom_point(data = filter(coldplay_ternary, group == 1), size = 1.5, show.legend = FALSE) +
+  scale_color_manual(values = c("#f2ad51", "#58389e")) +
+  scale_alpha_manual(values = c(1, .5)) +
+  #geom_text(aes(label = track_name), size = 1, check_overlap = TRUE) +
+  #geom_text(aes(label = energy), size = 1, check_overlap = TRUE) +
+  labs(x = "Upbeat\ntunes  ", y = "Energetic", z = "Dancey") +
+  theme_noticks() +
+  theme_hidegrid() +
+  theme_hidelabels() +
+  theme(plot.margin = margin(0,-205, 0, -205),
+        plot.background = element_rect(fill = "black", color = "black"),
+        panel.background = element_rect(fill = "black", color = "red"),
+        axis.title = element_text(size = 4,
+                                  color = "white",
+                                  family = "Lato Bold",
+                                  hjust = .5))
+  
+  
+ggsave("coldplay.png",  width = 8.5725, height = 4.826, units= "cm", dpi = 320)
