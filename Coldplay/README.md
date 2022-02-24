@@ -1,0 +1,1 @@
+![](Coldplay_figma.png)
