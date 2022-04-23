@@ -15,8 +15,9 @@ showtext_auto()
 # Spotify data ------------------------------------------------------------
 # You need to enter your credentials. Read how here
 # https://www.rcharlie.com/spotifyr/
-Sys.setenv(SPOTIFY_CLIENT_ID = 'xxxxxxxxxxxxxxxxxxxxx')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'xxxxxxxxxxxxxxxxxxxxx')
+Sys.setenv(SPOTIFY_CLIENT_ID = 'xxx')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'xxx')
+
 
 access_token <- get_spotify_access_token()
 
